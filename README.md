@@ -95,5 +95,5 @@ npm install -g @angular/cli
 ✅ Check your **.env** settings before starting the backend.
 
 ## 👥 Authors
-###Nikita Apatiev
-###Teodor Migalchan
+### Nikita Apatiev
+### Teodor Migalchan
