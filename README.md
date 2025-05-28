@@ -74,7 +74,7 @@ npm run dev
 ```
 API will be available at: **http://localhost:5000/api**
 
-###🔒 MongoDB Atlas Setup
+### 🔒 MongoDB Atlas Setup
 1️⃣ Create an account at MongoDB Atlas.
 2️⃣ Set up a cluster and create a database **movago**.
 3️⃣ Generate a connection string and add it to the **.env** file in the backend:
