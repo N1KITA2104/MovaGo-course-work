@@ -39,36 +39,36 @@ cd movago
 ```
 
 ### 🖥️ Frontend Setup (Angular)
-1️⃣ Navigate to the frontend directory:
+- 1️⃣ Navigate to the frontend directory:
 ```bash
 cd frontend
 ```
-2️⃣ Install dependencies:
+- 2️⃣ Install dependencies:
 ```bash
 npm install
 ```
-3️⃣ Run the Angular app:
+- 3️⃣ Run the Angular app:
 ```bash
 ng serve
 ```
 The app will be available at: http://localhost:4200/
 
 #### 🛠️ Backend Setup (Express.js + TypeScript)
-1️⃣ Navigate to the backend directory:
+- 1️⃣ Navigate to the backend directory:
 ```bash
 cd backend
 ```
-2️⃣ Create a **.env** file in **/src/** with the following configuration:
+- 2️⃣ Create a **.env** file in **/src/** with the following configuration:
 ```bash
 PORT=5000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 ```
-3️⃣ Install dependencies:
+- 3️⃣ Install dependencies:
 ```bash
 npm install
 ```
-4️⃣ Run the backend server:
+- 4️⃣ Run the backend server:
 ```bash
 npm run dev
 ```
@@ -87,12 +87,12 @@ MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/movago
 - Postman: For API testing.
 
 ### 📌 Recommendations
-✅ Use Node.js 18+ for best compatibility.
-✅ Install Angular CLI globally:
+- ✅ Use Node.js 18+ for best compatibility.
+- ✅ Install Angular CLI globally:
 ```bash
 npm install -g @angular/cli
 ```
-✅ Check your **.env** settings before starting the backend.
+- ✅ Check your **.env** settings before starting the backend.
 
 ## 👥 Authors
 ### Nikita Apatiev
