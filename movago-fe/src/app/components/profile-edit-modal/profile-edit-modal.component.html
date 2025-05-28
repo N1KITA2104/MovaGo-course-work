@@ -1,0 +1,101 @@
+<div class="modal-overlay" (click)="closeModal($event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Редагування профілю</h2>
+      <button class="close-button" (click)="close.emit()">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="profile-photo-section">
+        <div class="profile-photo-container">
+          <div class="profile-photo" [class.has-photo]="previewUrl">
+            <img *ngIf="previewUrl" [src]="previewUrl" alt="Фото профіля">
+            <div *ngIf="!previewUrl" class="profile-photo-placeholder">
+              <span *ngIf="user">{{ user.username.charAt(0).toUpperCase() }}</span>
+              <span *ngIf="!user">?</span>
+            </div>
+          </div>
+          <div class="photo-actions">
+            <label class="upload-button">
+              <span class="material-icons">add_a_photo</span>
+              <span>Завантажити фото</span>
+              <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+            </label>
+            <button *ngIf="previewUrl" class="remove-button" (click)="removePhoto()">
+              <span class="material-icons">delete</span>
+              <span>Видалити</span>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="selectedFile && !isUploading" class="upload-actions">
+          <button class="upload-photo-button" (click)="uploadPhoto()">
+            <span class="material-icons">cloud_upload</span>
+            <span>Зберегти фото</span>
+          </button>
+          <p class="photo-info" *ngIf="selectedFile">
+            <span class="material-icons">info</span>
+            Фото буде конвертовано в формат WebP та оптимізовано
+          </p>
+        </div>
+
+        <div *ngIf="isUploading" class="upload-progress">
+          <div class="spinner"></div>
+          <span>Завантаження та обробка фото...</span>
+        </div>
+      </div>
+
+      <div class="profile-form">
+        <div class="form-group">
+          <label for="username">Ім'я користувача</label>
+          <input
+            type="text"
+            id="username"
+            [(ngModel)]="editableProfile.username"
+            placeholder="Введіть ім'я користувача"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            [(ngModel)]="editableProfile.email"
+            placeholder="Введіть email"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="description">Про себе</label>
+          <textarea
+            id="description"
+            [(ngModel)]="editableProfile.description"
+            placeholder="Розкажіть про себе"
+            rows="4"
+          ></textarea>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-message">
+          <span class="material-icons">error</span>
+          {{ errorMessage }}
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="cancel-button" (click)="close.emit()">
+        <span class="material-icons">cancel</span>
+        Скасувати
+      </button>
+      <button class="save-button" (click)="saveProfile()">
+        <span class="material-icons">save</span>
+        Зберегти зміни
+      </button>
+    </div>
+  </div>
+</div>

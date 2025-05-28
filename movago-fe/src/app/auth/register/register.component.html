@@ -1,0 +1,104 @@
+<div class="auth-container">
+  <h2>Зареєструватися</h2>
+  <form [formGroup]="registerForm" (ngSubmit)="register()">
+    <div class="form-progress">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="formProgress"></div>
+      </div>
+      <span class="progress-text">{{ formProgress }}% заповнено</span>
+    </div>
+
+    <div class="form-group">
+      <label for="username">Ім'я</label>
+      <input
+        type="text"
+        id="username"
+        formControlName="username"
+        required
+        placeholder="Введіть ваше ім'я"
+      />
+      <div *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" class="error-message">
+        <span *ngIf="registerForm.get('username')?.errors?.['required']">Ім'я обов'язкове.</span>
+        <span *ngIf="registerForm.get('username')?.errors?.['minlength']">Ім'я повинно бути не менше 3 символів.</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        required
+        placeholder="Введіть ваш email"
+      />
+      <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="error-message">
+        <span *ngIf="registerForm.get('email')?.errors?.['required']">Email обов'язковий.</span>
+        <span *ngIf="registerForm.get('email')?.errors?.['email']">Будь ласка, введіть коректний email.</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password">Пароль</label>
+      <div class="password-input-container">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="password"
+          formControlName="password"
+          required
+          placeholder="Введіть ваш пароль"
+        />
+        <button type="button" class="password-toggle" (click)="togglePasswordVisibility()">
+          <span class="material-icons">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+        </button>
+      </div>
+      <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="error-message">
+        <span *ngIf="registerForm.get('password')?.errors?.['required']">Пароль обов'язковий.</span>
+        <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Пароль повинен бути не менше 6 символів.</span>
+        <span *ngIf="registerForm.get('password')?.errors?.['pattern']">Пароль повинен містити хоча б одну цифру, одну велику літеру та один спеціальний символ.</span>
+      </div>
+
+      <div class="password-strength" *ngIf="registerForm.get('password')?.value">
+        <div class="strength-meter">
+          <div class="strength-meter-fill" [style.width.%]="passwordStrength" [ngClass]="passwordStrengthClass"></div>
+        </div>
+        <div class="strength-text" [ngClass]="passwordStrengthClass">
+          {{ passwordStrengthText }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Підтвердження паролю</label>
+      <div class="password-input-container">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          id="confirmPassword"
+          formControlName="confirmPassword"
+          required
+          placeholder="Підтвердіть ваш пароль"
+        />
+        <button type="button" class="password-toggle" (click)="toggleConfirmPasswordVisibility()">
+          <span class="material-icons">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</span>
+        </button>
+      </div>
+      <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="error-message">
+        <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Підтвердження паролю обов'язкове.</span>
+      </div>
+      <div *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched" class="error-message">
+        Паролі не співпадають.
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid || isLoading">
+      <span *ngIf="isLoading">
+        <span class="spinner"></span>
+        Реєстрація...
+      </span>
+      <span *ngIf="!isLoading">Зареєструватися</span>
+    </button>
+
+    <div class="auth-links">
+      <p>Вже маєте акаунт? <a routerLink="/login">Увійти</a></p>
+    </div>
+  </form>
+  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+</div>

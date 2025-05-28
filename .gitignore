@@ -1,0 +1,49 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.code-workspace
+*.sublime-*
+
+# Logs, cache
+*.log
+*.tmp
+*.swp
+*.state
+*.cache
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+debug.log
+
+# Node
+movago-be/node_modules/
+movago-fe/node_modules/
+
+# Build output
+movago-be/dist/
+movago-fe/dist/
+movago-fe/build/
+movago-fe/.angular/
+
+# Coverage and test
+movago-fe/coverage/
+movago-be/coverage/
+
+# Environment
+movago-be/src/.env
+movago-be/uploads/*
+!movago-be/uploads/.gitkeep
+#/movago-fe/src/environments/environment.ts
+#/movago-fe/src/environments/environment.prod.ts
+
+# Angular cache
+movago-fe/.eslintcache
+movago-fe/.turbo/
+
+# Docker
+*.local.yml
+.env.*

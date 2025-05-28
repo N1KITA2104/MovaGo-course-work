@@ -1,0 +1,208 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>Профіль користувача</h1>
+  </div>
+
+  <div class="profile-loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Завантаження профілю...</p>
+  </div>
+
+  <div class="profile-content" *ngIf="!loading && userProfile">
+    <div class="profile-card">
+      <div class="profile-info">
+        <div class="profile-avatar" (click)="openEditProfileModal()">
+          <img *ngIf="userProfile.profilePhoto" [src]="getProfilePhotoUrl(userProfile.profilePhoto)" alt="Фото профиля">
+          <div *ngIf="!userProfile.profilePhoto" class="avatar-placeholder">
+            {{ userProfile.username.charAt(0).toUpperCase() }}
+          </div>
+          <div class="edit-overlay">
+            <span class="material-icons">edit</span>
+          </div>
+        </div>
+        <div class="profile-details">
+          <h2>{{ userProfile.username }}</h2>
+          <p><span class="material-icons" style="font-size: 16px; vertical-align: middle; margin-right: 5px;">email</span> {{ userProfile.email }}</p>
+          <div class="user-tags">
+            <p class="profile-status" [class]="userProfile.status">
+              <span class="material-icons">
+                {{ userProfile.status === 'active' ? 'check_circle' :
+                userProfile.status === 'inactive' ? 'cancel' : 'hourglass_empty' }}
+              </span>
+              {{ getStatusLabel(userProfile.status) }}
+            </p>
+            @if(userService.isAdmin$ | async){
+              <p class="account-role">
+                <span class="material-icons">admin_panel_settings</span>
+                {{ userProfile.role }}
+              </p>
+            }
+          </div>
+          <p *ngIf="userProfile.createdAt">
+            <span class="material-icons" style="font-size: 16px; vertical-align: middle; margin-right: 5px;">event</span>
+            Дата реєстрації: {{ userProfile.createdAt | date:'dd.MM.yyyy' }}
+          </p>
+          <p *ngIf="userProfile.description" class="user-description">
+            {{ userProfile.description }}
+          </p>
+          <button class="edit-profile-button" (click)="openEditProfileModal()">
+            <span class="material-icons">edit</span>
+            Редагувати профіль
+          </button>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-card xp">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <span class="material-icons">star</span>
+            </div>
+            <div class="stat-trend">
+              <span class="material-icons">trending_up</span>
+            </div>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ userProfile.progress.xp | humanNumber }}</div>
+            <div class="stat-label">Досвід (XP)</div>
+          </div>
+        </div>
+        <div class="stat-card level">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <span class="material-icons">trending_up</span>
+            </div>
+            <div class="stat-trend">
+              <span class="material-icons">trending_up</span>
+            </div>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ userProfile.progress.level | humanNumber }}</div>
+            <div class="stat-label">Рівень</div>
+          </div>
+        </div>
+        <div class="stat-card lessons">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <span class="material-icons">menu_book</span>
+            </div>
+            <div class="stat-trend">
+              <span class="material-icons">trending_up</span>
+            </div>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ userProfile.progress.completedLessons.length | humanNumber }}</div>
+            <div class="stat-label">Уроків завершено</div>
+          </div>
+        </div>
+        <div class="stat-card streak">
+          <div class="stat-header">
+            <div class="stat-icon">
+              <span class="material-icons">local_fire_department</span>
+            </div>
+            <div class="stat-trend">
+              <span class="material-icons">trending_up</span>
+            </div>
+          </div>
+          <div class="stat-content">
+            <div class="stat-value">{{ userProfile.progress.streakDays | humanNumber }}</div>
+            <div class="stat-label">Днів поспіль</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-sections">
+      <div class="profile-section">
+        <h3><span class="material-icons">calendar_today</span> Активність</h3>
+        <div class="activity-summary">
+          <div class="activity-stats">
+            <div class="activity-stat-card">
+              <div class="stat-icon"><span class="material-icons">event_available</span></div>
+              <div class="stat-value">{{ getActiveMonthCount() }}</div>
+              <div class="stat-label">Активних місяців</div>
+            </div>
+            <div class="activity-stat-card">
+              <div class="stat-icon"><span class="material-icons">date_range</span></div>
+              <div class="stat-value">{{ getActiveDaysCount() }}</div>
+              <div class="stat-label">Днів активності</div>
+            </div>
+            <div class="activity-stat-card">
+              <div class="stat-icon"><span class="material-icons">local_fire_department</span></div>
+              <div class="stat-value">{{ userProfile.progress.streakDays || 0 }}</div>
+              <div class="stat-label">Найдовша серія</div>
+            </div>
+          </div>
+          <div class="activity-info">
+            <div class="activity-info-item">
+              <span class="material-icons">insights</span>
+              <span>Останній місяць: <strong>{{ getRecentActivityPercentage() }}%</strong> активності</span>
+            </div>
+            <div class="activity-info-item" *ngIf="getLastActiveDate()">
+              <span class="material-icons">update</span>
+              <span>Остання активність: <strong>{{ getLastActiveDate() | date:'dd.MM.yyyy' }}</strong></span>
+            </div>
+          </div>
+        </div>
+        <app-activity-calendar></app-activity-calendar>
+      </div>
+
+      <div class="profile-section">
+        <h3><span class="material-icons">school</span> Завершені уроки</h3>
+        <div class="completed-lessons-grid" *ngIf="completedLessons.length > 0">
+          <div class="lesson-card" *ngFor="let lesson of completedLessons">
+            <div class="lesson-header">
+              <div class="lesson-icon">{{ lesson.icon }}</div>
+              <div class="lesson-status">
+                <span class="status-badge completed">
+                  <span class="material-icons">check_circle</span>
+                  Завершено
+                </span>
+              </div>
+            </div>
+            <div class="lesson-content">
+              <h4 class="lesson-title">{{ lesson.title }}</h4>
+              <p class="lesson-description">{{ lesson.description }}</p>
+              <div class="lesson-meta">
+                <span class="difficulty-badge" [class]="lesson.difficulty">
+                  <span class="material-icons">
+                    {{ lesson.difficulty === 'beginner' ? 'star' :
+                    lesson.difficulty === 'intermediate' ? 'star_half' : 'stars' }}
+                  </span>
+                  {{ getDifficultyLabel(lesson.difficulty) }}
+                </span>
+              </div>
+            </div>
+            <div class="lesson-actions">
+              <a [routerLink]="['/lessons', lesson._id]" class="action-button primary">
+                <span class="material-icons">replay</span>
+                Повторити
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="no-lessons" *ngIf="completedLessons.length === 0">
+          <div class="no-lessons-icon">
+            <span class="material-icons">menu_book</span>
+          </div>
+          <p>Ви ще не завершили жодного уроку.</p>
+          <a routerLink="/lessons" class="start-lessons-button">
+            <span class="material-icons">play_arrow</span>
+            Перейти до уроків
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-not-found" *ngIf="!loading && !userProfile">
+    <p>Профіль не знайдено. <a routerLink="/login">Увійдіть</a> або <a routerLink="/register">зареєструйтеся</a>.</p>
+  </div>
+</div>
+
+<app-profile-edit-modal
+  *ngIf="showEditProfileModal"
+  [user]="userProfile"
+  (close)="closeEditProfileModal()"
+  (profileUpdated)="onProfileUpdated($event)">
+</app-profile-edit-modal>

@@ -1,0 +1,87 @@
+<header class="header" [class.header-hidden]="isHeaderHidden">
+  <div class="header-left">
+    <div class="logo">
+      <a routerLink="/">
+        <span class="material-icons">school</span>
+        <span class="logo-text">MovaGo</span>
+      </a>
+    </div>
+    <button class="mobile-menu-button" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+      <div class="hamburger-icon" [class.open]="isMobileMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </button>
+  </div>
+
+  <div class="nav-backdrop" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+  <nav class="nav" [class.nav-open]="isMobileMenuOpen">
+    <ul class="nav-list" [class.mobile-nav-list]="isMobileMenuOpen">
+      <li>
+        <a
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          (click)="closeMobileMenu()"
+        >
+          <span class="material-icons">home</span>
+          <span class="link-text">Головна</span>
+        </a>
+      </li>
+      <li *ngIf="authService.isLoggedIn()">
+        <a routerLink="/lessons" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="material-icons">menu_book</span>
+          <span class="link-text">Уроки</span>
+        </a>
+      </li>
+      <li *ngIf="authService.isLoggedIn()">
+        <a routerLink="/profile" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="material-icons">person</span>
+          <span class="link-text">Профіль</span>
+        </a>
+      </li>
+      <li *ngIf="!authService.isLoggedIn()">
+        <a routerLink="/login" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="material-icons">login</span>
+          <span class="link-text">Увійти</span>
+        </a>
+      </li>
+      <li *ngIf="!authService.isLoggedIn()">
+        <a routerLink="/register" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span class="material-icons">person_add</span>
+          <span class="link-text">Зареєструватися</span>
+        </a>
+      </li>
+      @if (authService.isLoggedIn() && (userService.isAdmin$ | async)) {
+        <li>
+          <a routerLink="/admin" routerLinkActive="active" (click)="closeMobileMenu()">
+            <span class="material-icons">admin_panel_settings</span>
+            <span class="link-text">Адмін</span>
+          </a>
+        </li>
+      }
+      <li *ngIf="authService.isLoggedIn()" class="logout-item">
+        <button (click)="logout()" class="logout-btn">
+          <span class="material-icons">logout</span>
+          <span class="link-text">Вийти</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="header-actions">
+    <app-theme-toggle></app-theme-toggle>
+  </div>
+  <div class="user-info" *ngIf="authService.isLoggedIn() && userProfile">
+    <div class="xp-display">
+      <span class="material-icons xp-icon">star</span>
+      <span class="xp-count">{{ userProfile.progress.xp | humanNumber }} XP</span>
+    </div>
+    <div class="level-display">
+      <span class="material-icons level-icon">trending_up</span>
+      <span class="level-text">Рівень {{ userProfile.progress.level | humanNumber }}</span>
+    </div>
+  </div>
+</header>
+<div class="main-content-padding"></div>

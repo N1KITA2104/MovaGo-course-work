@@ -1,0 +1,127 @@
+<div class="lessons-container">
+  <div class="lessons-header">
+    <h1><span class="material-icons">auto_stories</span> Уроки англійської мови</h1>
+    <div class="filters">
+      <div class="filter-group">
+        <label><span class="material-icons">signal_cellular_alt</span> Складність:</label>
+        <div class="filter-buttons">
+          <button
+            [class.active]="selectedDifficulty === 'all'"
+            (click)="filterByDifficulty('all')"
+          >
+            Всі рівні
+          </button>
+          <button
+            [class.active]="selectedDifficulty === 'beginner'"
+            (click)="filterByDifficulty('beginner')"
+          >
+            Початковий
+          </button>
+          <button
+            [class.active]="selectedDifficulty === 'intermediate'"
+            (click)="filterByDifficulty('intermediate')"
+          >
+            Середній
+          </button>
+          <button
+            [class.active]="selectedDifficulty === 'advanced'"
+            (click)="filterByDifficulty('advanced')"
+          >
+            Просунутий
+          </button>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label><span class="material-icons">category</span> Категорія:</label>
+        <div class="filter-buttons">
+          <button
+            [class.active]="selectedCategory === 'all'"
+            (click)="filterByCategory('all')"
+          >
+            Всі категорії
+          </button>
+          <button
+            [class.active]="selectedCategory === 'vocabulary'"
+            (click)="filterByCategory('vocabulary')"
+          >
+            Словниковий запас
+          </button>
+          <button
+            [class.active]="selectedCategory === 'grammar'"
+            (click)="filterByCategory('grammar')"
+          >
+            Граматика
+          </button>
+          <button
+            [class.active]="selectedCategory === 'conversation'"
+            (click)="filterByCategory('conversation')"
+          >
+            Розмовна мова
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lessons-loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Завантаження уроків...</p>
+  </div>
+
+  <div class="lessons-grid" *ngIf="!loading">
+    @for (lesson of filteredLessons; track lesson._id) {
+      <div class="lesson-card" [class.completed]="lesson.completed">
+        <div class="lesson-header">
+          <div class="lesson-icon">{{ lesson.icon }}</div>
+          <div class="lesson-status" [class.completed]="lesson.completed" [class.new]="!lesson.completed">
+            <span class="material-icons">{{ lesson.completed ? 'check_circle' : 'play_circle' }}</span>
+            {{ lesson.completed ? 'Завершено' : 'Новий' }}
+          </div>
+        </div>
+
+        <div class="lesson-content">
+          <h3 class="lesson-title">{{ lesson.title }}</h3>
+          <p class="lesson-description">{{ lesson.description }}</p>
+          <div class="lesson-meta">
+            <span class="lesson-difficulty" [class]="lesson.difficulty">
+              <span class="material-icons">{{
+                  lesson.difficulty === 'beginner' ? 'emoji_events' :
+                    lesson.difficulty === 'intermediate' ? 'military_tech' : 'workspace_premium'
+                }}</span>
+              {{ getDifficultyLabel(lesson.difficulty) }}
+            </span>
+            <span class="lesson-category" *ngIf="lesson.category">
+              <span class="material-icons">category</span>
+              {{ getCategoryLabel(lesson.category) }}
+            </span>
+            <span class="lesson-completion" *ngIf="lesson.completedCount > 0">
+              <span class="material-icons">repeat</span>
+              {{ lesson.completedCount }} раз(ів)
+            </span>
+          </div>
+        </div>
+
+        <div class="lesson-actions">
+          <a [routerLink]="['/lessons', lesson._id]" class="lesson-button">
+            <span class="material-icons">{{ lesson.completed ? 'refresh' : 'play_arrow' }}</span>
+            {{ lesson.completed ? 'Повторити' : 'Почати' }}
+          </a>
+        </div>
+      </div>
+    }
+
+    <div class="no-lessons" *ngIf="filteredLessons.length === 0 && !loading">
+      <div class="no-data-icon"><span class="material-icons">menu_book</span></div>
+      <p>Уроки не знайдено. Спробуйте вибрати інший рівень складності або категорію.</p>
+    </div>
+  </div>
+
+  <div class="load-more" *ngIf="hasMoreLessons && !loading && filteredLessons.length > 0">
+    <button (click)="loadMoreLessons()" [disabled]="loadingMore" class="load-more-button">
+      <span *ngIf="!loadingMore" class="material-icons">expand_more</span>
+      <span *ngIf="!loadingMore">Завантажити ще</span>
+      <div class="spinner small" *ngIf="loadingMore"></div>
+    </button>
+  </div>
+</div>

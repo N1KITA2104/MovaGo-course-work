@@ -1,0 +1,76 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1 class="admin-title"><span class="material-icons">admin_panel_settings</span> Панель адміністратора</h1>
+    <div class="admin-stats">
+      <div class="stat-card">
+        <div class="stat-icon"><span class="material-icons">people</span></div>
+        <div class="stat-value">{{ users.length | humanNumber }}</div>
+        <div class="stat-label">Користувачів</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><span class="material-icons">menu_book</span></div>
+        <div class="stat-value">{{ lessons.length | humanNumber }}</div>
+        <div class="stat-label">Уроків</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-tabs">
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'users'"
+      (click)="setActiveTab('users')">
+      <span class="material-icons">group</span>
+      Користувачі
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'lessons'"
+      (click)="setActiveTab('lessons')">
+      <span class="material-icons">school</span>
+      Уроки
+    </button>
+  </div>
+
+  <!-- Users Management Tab -->
+  <app-user-management
+    *ngIf="activeTab === 'users'"
+    [users]="users"
+    [loading]="loadingUsers"
+    (userRoleChanged)="updateUserRole($event)"
+    (userStatusChanged)="updateUserStatus($event)"
+    (userDeleted)="deleteUser($event)"
+    (openStatusModalRequest)="openStatusModal($event)">
+  </app-user-management>
+
+  <!-- Lessons Management Tab -->
+  <app-lesson-management
+    *ngIf="activeTab === 'lessons'"
+    [lessons]="lessons"
+    [loading]="loadingLessons"
+    (lessonPublishedToggled)="toggleLessonPublished($event)"
+    (lessonEditRequested)="editLesson($event)"
+    (lessonDeleteRequested)="deleteLesson($event)"
+    (addLessonRequested)="showLessonForm()">
+  </app-lesson-management>
+
+  <!-- Lesson Form Modal -->
+  <app-lesson-form-modal
+    *ngIf="showingLessonModal"
+    [lessonForm]="lessonForm"
+    [editingLesson]="editingLesson"
+    [savingLesson]="savingLesson"
+    (closeModal)="closeLessonModal($event)"
+    (saveLesson)="saveLesson()">
+  </app-lesson-form-modal>
+
+  <!-- User Status Modal -->
+  <app-user-status-modal
+    *ngIf="showingStatusModal"
+    [selectedUser]="selectedUser"
+    [selectedStatus]="selectedStatus"
+    (statusSelected)="selectStatus($event)"
+    (saveStatus)="saveUserStatus()"
+    (closeModal)="closeStatusModal($event)">
+  </app-user-status-modal>
+</div>

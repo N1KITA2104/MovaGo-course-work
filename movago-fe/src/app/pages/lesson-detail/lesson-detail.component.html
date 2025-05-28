@@ -1,0 +1,235 @@
+<div class="lesson-detail-container">
+  <div class="lesson-header" *ngIf="lesson">
+    <a routerLink="/lessons" class="back-button">
+      <span class="material-icons">arrow_back</span> Назад до уроків
+    </a>
+    <div class="lesson-info">
+      <div class="lesson-icon">{{ lesson.icon }}</div>
+      <div>
+        <h1>{{ lesson.title }}</h1>
+        <p class="lesson-description">{{ lesson.description }}</p>
+        <div class="lesson-meta">
+        <span class="lesson-difficulty" [class]="lesson.difficulty">
+          {{ getDifficultyLabel(lesson.difficulty) }}
+        </span>
+          <span class="lesson-category" *ngIf="lesson.category">
+          {{ getCategoryLabel(lesson.category) }}
+        </span>
+          <span class="lesson-questions">
+          {{ lesson.questionsCount }} питань
+        </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- This will become sticky on mobile -->
+    <div class="lesson-progress" *ngIf="lessonStarted && !lessonCompleted">
+      <div class="progress-bar">
+        <div class="progress-fill" [style.width.%]="progressPercentage"></div>
+      </div>
+      <span class="progress-text">
+      {{ currentQuestionIndex + 1 }} / {{ lesson.questions.length }}
+    </span>
+    </div>
+  </div>
+
+  <div class="lesson-start-screen" *ngIf="lesson && !lessonStarted && !lessonCompleted">
+    <div class="start-content">
+      <div class="lesson-icon-large">{{ lesson.icon }}</div>
+      <h2>Готові почати урок?</h2>
+      <p>{{ lesson.description }}</p>
+      <div class="lesson-details">
+        <div class="detail-item">
+          <span class="detail-text">{{ lesson.questionsCount }} питань</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-text">Заробіть до {{ lesson.questions.length * 10 }} XP</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-text">Підвищіть свій рівень</span>
+        </div>
+      </div>
+      <button class="start-button" (click)="startLesson()">
+        Почати урок
+      </button>
+    </div>
+  </div>
+
+  <div class="lesson-content" *ngIf="lesson && lessonStarted && !lessonCompleted">
+    <div class="question-container" *ngIf="currentQuestion" [class.question-animating]="animatingQuestion">
+      <h2 class="question-text">{{ currentQuestion.question }}</h2>
+
+      <div class="options-container" *ngIf="currentQuestion.type === 'multiple-choice'">
+        <button
+          *ngFor="let option of getMultipleChoiceOptions()"
+          class="option-button"
+          [class.selected]="selectedAnswer === option"
+          [class.correct]="showFeedback && option === getCorrectAnswerForMultipleChoice()"
+          [class.incorrect]="showFeedback && selectedAnswer === option && option !== getCorrectAnswerForMultipleChoice()"
+          (click)="selectAnswer(option)"
+          [disabled]="showFeedback">
+          {{ option }}
+        </button>
+      </div>
+
+      <div class="translation-container" *ngIf="currentQuestion.type === 'translation'">
+        <input
+          type="text"
+          [(ngModel)]="userInput"
+          placeholder="Введіть переклад..."
+          [disabled]="showFeedback"
+          (keyup.enter)="checkTranslation()">
+        <button
+          class="check-button"
+          (click)="checkTranslation()"
+          [disabled]="showFeedback || !userInput">
+          Перевірити
+        </button>
+      </div>
+
+      <div class="matching-container" *ngIf="currentQuestion.type === 'matching'">
+        <p class="matching-instruction">
+          З'єднайте відповідні пари, спочатку натиснувши на слово зліва, а потім на відповідне слово справа.
+        </p>
+        <div class="matching-pairs-container">
+          <div class="matching-pairs">
+            <div class="matching-column">
+              <div
+                *ngFor="let pair of matchingPairs"
+                class="matching-item left"
+                [class.selected]="isMatchingItemSelected(pair, 'left')"
+                [class.matched]="isMatchingItemMatched(pair, 'left')"
+                [class.correct]="showFeedback && isMatchedPairCorrect(pair, 'left')"
+                [class.incorrect]="showFeedback && isMatchingItemMatched(pair, 'left') && !isMatchedPairCorrect(pair, 'left')"
+                (click)="selectMatchingPair(pair, 'left')"
+              >
+                {{ pair.left }}
+              </div>
+            </div>
+            <div class="matching-column">
+              <div
+                *ngFor="let pair of matchingPairs"
+                class="matching-item right"
+                [class.selected]="isMatchingItemSelected(pair, 'right')"
+                [class.matched]="isMatchingItemMatched(pair, 'right')"
+                [class.correct]="showFeedback && isMatchedPairCorrect(pair, 'right')"
+                [class.incorrect]="showFeedback && isMatchingItemMatched(pair, 'right') && !isMatchedPairCorrect(pair, 'right')"
+                (click)="selectMatchingPair(pair, 'right')"
+              >
+                {{ pair.right }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="match-indicator" *ngIf="lastMatchedPair">
+          Пару з'єднано: {{ lastMatchedPair.left }} - {{ lastMatchedPair.right }}
+        </div>
+      </div>
+
+      <div class="word-order-container" *ngIf="currentQuestion.type === 'word-order'">
+        <p class="word-order-instruction">
+          Складіть речення з наступних слів, натискаючи на них у правильному порядку.
+        </p>
+
+        <div class="word-order-selected">
+          <div class="word-order-sentence">
+            <span *ngIf="selectedWordOrderItems.length === 0" class="word-order-placeholder">Натисніть на слова нижче, щоб скласти речення...</span>
+            <span *ngFor="let word of selectedWordOrderItems; let i = index" class="selected-word">
+            {{ word }}
+          </span>
+          </div>
+          <button
+            *ngIf="selectedWordOrderItems.length > 0"
+            class="reset-button"
+            (click)="resetWordOrder()"
+            [disabled]="showFeedback">
+            Скинути
+          </button>
+        </div>
+
+        <div class="word-order-options">
+          <button
+            *ngFor="let item of wordOrderItems"
+            class="word-button"
+            [class.selected]="item.selected"
+            [disabled]="item.selected || showFeedback"
+            (click)="selectWordOrderItem(item.word)">
+            {{ item.word }}
+          </button>
+        </div>
+      </div>
+
+      <div class="sentence-completion-container" *ngIf="currentQuestion.type === 'sentence-completion'">
+        <p class="sentence-completion-instruction">
+          Оберіть правильне речення:
+        </p>
+
+        <div class="sentence-options">
+          <button
+            *ngFor="let option of getMultipleChoiceOptions()"
+            class="sentence-option"
+            [class.selected]="selectedSentence === option"
+            [class.correct]="showFeedback && option === getCorrectAnswerForMultipleChoice()"
+            [class.incorrect]="showFeedback && selectedSentence === option && option !== getCorrectAnswerForMultipleChoice()"
+            (click)="selectSentence(option)"
+            [disabled]="showFeedback">
+            {{ option }}
+          </button>
+        </div>
+      </div>
+
+      <!-- This will become sticky on mobile -->
+      <div class="feedback-container" *ngIf="showFeedback">
+        <div class="feedback" [class.correct-feedback]="isCorrect" [class.incorrect-feedback]="!isCorrect">
+          <div class="feedback-icon">{{ isCorrect ? '✓' : '✗' }}</div>
+          <div class="feedback-text">
+            <p>{{ isCorrect ? 'Правильно!' : 'Неправильно!' }}</p>
+            <p *ngIf="!isCorrect && currentQuestion.type === 'multiple-choice'">
+              Правильна відповідь: {{ getCorrectAnswerForMultipleChoice() }}
+            </p>
+            <p *ngIf="!isCorrect && currentQuestion.type === 'translation'">
+              Правильна відповідь: {{ getCorrectAnswerText() }}
+            </p>
+            <p *ngIf="!isCorrect && currentQuestion.type === 'word-order'">
+              Правильна відповідь: {{ getCorrectAnswerText() }}
+            </p>
+            <p *ngIf="!isCorrect && currentQuestion.type === 'sentence-completion'">
+              Правильна відповідь: {{ getCorrectAnswerForMultipleChoice() }}
+            </p>
+            <p *ngIf="!isCorrect && currentQuestion.type === 'matching'">
+              Перевірте правильність з'єднаних пар.
+            </p>
+            <p *ngIf="currentQuestion.hint && !isCorrect" class="hint">Підказка: {{ currentQuestion.hint }}</p>
+          </div>
+        </div>
+        <button class="continue-button" (click)="nextQuestion()">
+          {{ currentQuestionIndex < lesson.questions.length - 1 ? 'Продовжити' : 'Завершити урок' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="lesson-completed" *ngIf="lessonCompleted">
+    <div class="completion-animation"></div>
+    <h2>Урок завершено!</h2>
+    <div class="completion-stats">
+      <div class="stat">
+        <span class="stat-label">Правильних відповідей</span>
+        <span class="stat-value">{{ correctAnswers }} / {{ lesson?.questions?.length }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Отримано XP</span>
+        <span class="stat-value">+{{ earnedXP }}</span>
+      </div>
+    </div>
+    <div class="completion-buttons">
+      <button class="btn-primary" (click)="restartLesson()">
+        Пройти ще раз
+      </button>
+      <a routerLink="/lessons" class="btn-secondary">
+        Повернутися до уроків
+      </a>
+    </div>
+  </div>
+</div>

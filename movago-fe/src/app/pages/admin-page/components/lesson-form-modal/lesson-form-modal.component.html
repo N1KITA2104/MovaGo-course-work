@@ -1,0 +1,279 @@
+<div class="modal-overlay" (click)="onCloseModal($event)">
+  <div class="lesson-form-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <span class="material-icons">{{ editingLesson ? 'edit_note' : 'add_circle' }}</span>
+        {{ editingLesson ? 'Редагувати урок' : 'Додати новий урок' }}
+      </h3>
+      <button class="close-button" (click)="onCloseModal($event)">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <form [formGroup]="lessonForm" (ngSubmit)="onSaveLesson()" class="modal-content tabbed-form">
+      <!-- Tab Navigation -->
+      <div class="form-tabs">
+        <button type="button" class="tab-nav-button" [class.active]="activeFormTab === 'basic'" (click)="setActiveFormTab('basic')">
+          <span class="material-icons">info</span>
+          Основна інформація
+        </button>
+        <button type="button" class="tab-nav-button" [class.active]="activeFormTab === 'questions'" (click)="setActiveFormTab('questions')">
+          <span class="material-icons">quiz</span>
+          Питання <span class="question-count">{{ questionBankArray.length }}</span>
+        </button>
+        <button type="button" class="tab-nav-button" [class.active]="activeFormTab === 'settings'" (click)="setActiveFormTab('settings')">
+          <span class="material-icons">settings</span>
+          Налаштування
+        </button>
+      </div>
+
+      <!-- Basic Info Tab -->
+      <div class="form-tab-content" *ngIf="activeFormTab === 'basic'">
+        <div class="form-group">
+          <label for="title">Назва уроку*</label>
+          <input type="text" id="title" formControlName="title" placeholder="Введіть назву уроку">
+          <div class="error-message" *ngIf="lessonForm.get('title')?.invalid && lessonForm.get('title')?.touched">
+            Назва уроку обов'язкова
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Опис уроку*</label>
+          <textarea id="description" formControlName="description" rows="3" placeholder="Введіть опис уроку"></textarea>
+          <div class="error-message" *ngIf="lessonForm.get('description')?.invalid && lessonForm.get('description')?.touched">
+            Опис уроку обов'язковий
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="icon">Іконка*</label>
+            <input type="text" id="icon" formControlName="icon" placeholder="Емодзі або символ">
+            <div class="error-message" *ngIf="lessonForm.get('icon')?.invalid && lessonForm.get('icon')?.touched">
+              Іконка обов'язкова
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="difficulty">Складність*</label>
+            <select id="difficulty" formControlName="difficulty">
+              <option value="beginner">Початковий</option>
+              <option value="intermediate">Середній</option>
+              <option value="advanced">Просунутий</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="category">Категорія*</label>
+            <select id="category" formControlName="category">
+              <option value="vocabulary">Словниковий запас</option>
+              <option value="grammar">Граматика</option>
+              <option value="conversation">Розмовна мова</option>
+              <option value="reading">Читання</option>
+              <option value="listening">Аудіювання</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Questions Tab -->
+      <div class="form-tab-content questions-tab" *ngIf="activeFormTab === 'questions'">
+        <div class="questions-header">
+          <div class="question-bank-settings">
+            <div class="form-group">
+              <label for="questionsCount">Кількість питань для уроку</label>
+              <input type="number" id="questionsCount" formControlName="questionsCount" min="1" max="20">
+              <div class="hint-text">Скільки випадкових питань буде обрано з банку питань для кожного проходження уроку</div>
+            </div>
+          </div>
+          <button type="button" class="add-question-button" (click)="addQuestion()">
+            <span class="material-icons">add_circle</span> Додати питання
+          </button>
+        </div>
+
+        <div class="questions-container">
+          <div class="questions-sidebar">
+            <div class="questions-nav-header">
+              <h4>Питання</h4>
+              <span class="questions-count">{{ questionBankArray.length }}</span>
+            </div>
+            <div class="questions-nav-list">
+              <button
+                *ngFor="let questionControl of questionBankArray.controls; let i = index"
+                type="button"
+                class="question-nav-item"
+                [class.active]="i === activeQuestionIndex"
+                (click)="setActiveQuestion(i)">
+                <span class="question-number">{{ i + 1 }}</span>
+                <span class="question-type">{{ getQuestionTypeLabel(questionControl.get('type')?.value) }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="questions-content">
+            <div formArrayName="questionBank" class="questions-list">
+              <div *ngFor="let questionControl of questionBankArray.controls; let i = index"
+                   class="question-item"
+                   [class.active]="i === activeQuestionIndex"
+                   [class.hidden]="i !== activeQuestionIndex">
+                <div [formGroupName]="i" class="question-form">
+                  <div class="question-header">
+                    <h5>Питання #{{ i + 1 }}</h5>
+                    <div class="question-actions">
+                      <button type="button" class="question-nav-button" (click)="setActiveQuestion(i-1)" [disabled]="i === 0">
+                        <span class="material-icons">arrow_back</span>
+                      </button>
+                      <button type="button" class="question-nav-button" (click)="setActiveQuestion(i+1)" [disabled]="i === questionBankArray.length - 1">
+                        <span class="material-icons">arrow_forward</span>
+                      </button>
+                      <button type="button" class="remove-question-button" (click)="removeQuestion(i)" *ngIf="questionBankArray.length > 1">
+                        <span class="material-icons">delete</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Тип питання*</label>
+                    <select formControlName="type" (change)="onQuestionTypeChange(i)">
+                      <option value="multiple-choice">Вибір з варіантів</option>
+                      <option value="translation">Переклад</option>
+                      <option value="matching">Співставлення</option>
+                      <option value="word-order">Порядок слів</option>
+                      <option value="sentence-completion">Доповнення речення</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Текст питання*</label>
+                    <input type="text" formControlName="question" placeholder="Введіть текст питання">
+                    <div class="error-message" *ngIf="questionControl.get('question')?.invalid && questionControl.get('question')?.touched">
+                      Текст питання обов'язковий
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label>Підказка (необов'язково)</label>
+                    <input type="text" formControlName="hint" placeholder="Введіть підказку">
+                  </div>
+
+                  <div *ngIf="questionControl.get('type')?.value === 'multiple-choice' || questionControl.get('type')?.value === 'sentence-completion'">
+                    <div class="form-group">
+                      <label>Правильна відповідь*</label>
+                      <select formControlName="correctAnswer">
+                        <option *ngFor="let option of getOptionsArray(i).controls; let j = index" [value]="option.value">
+                          {{ option.value }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div formArrayName="options" class="options-list">
+                      <h6>Варіанти відповідей</h6>
+                      <div *ngFor="let optionControl of getOptionsArray(i).controls; let j = index" class="option-item">
+                        <div class="form-row">
+                          <input [formControlName]="j" placeholder="Варіант відповіді">
+                          <button type="button" class="remove-option-button" (click)="removeOption(i, j)" *ngIf="getOptionsArray(i).length > 2">
+                            <span class="material-icons">remove_circle</span>
+                          </button>
+                        </div>
+                      </div>
+                      <button type="button" class="add-option-button" (click)="addOption(i)">
+                        <span class="material-icons">add_circle</span> Додати варіант
+                      </button>
+                    </div>
+                  </div>
+
+                  <div *ngIf="questionControl.get('type')?.value === 'translation'">
+                    <div class="form-group">
+                      <label>Правильна відповідь*</label>
+                      <input type="text" formControlName="correctAnswer" placeholder="Введіть правильну відповідь">
+                      <div class="error-message" *ngIf="questionControl.get('correctAnswer')?.invalid && questionControl.get('correctAnswer')?.touched">
+                        Правильна відповідь обов'язкова
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="questionControl.get('type')?.value === 'matching'">
+                    <div formArrayName="matchingPairs" class="matching-pairs-list">
+                      <h6>Пари для співставлення</h6>
+                      <div *ngFor="let pairControl of getMatchingPairsArray(i).controls; let j = index" class="matching-pair-item">
+                        <div [formGroupName]="j" class="form-row">
+                          <div class="form-group">
+                            <input formControlName="left" placeholder="Ліва частина">
+                          </div>
+                          <div class="form-group">
+                            <input formControlName="right" placeholder="Права частина">
+                          </div>
+                          <button type="button" class="remove-pair-button" (click)="removeMatchingPair(i, j)" *ngIf="getMatchingPairsArray(i).length > 1">
+                            <span class="material-icons">remove_circle</span>
+                          </button>
+                        </div>
+                      </div>
+                      <button type="button" class="add-pair-button" (click)="addMatchingPair(i)">
+                        <span class="material-icons">add_circle</span> Додати пару
+                      </button>
+                    </div>
+                  </div>
+
+                  <div *ngIf="questionControl.get('type')?.value === 'word-order'">
+                    <div formArrayName="wordOrder" class="word-order-list">
+                      <h6>Слова для впорядкування</h6>
+                      <div *ngFor="let wordControl of getWordOrderArray(i).controls; let j = index" class="word-order-item">
+                        <div class="form-row">
+                          <input [formControlName]="j" placeholder="Слово">
+                          <button type="button" class="remove-word-button" (click)="removeWordOrderItem(i, j)" *ngIf="getWordOrderArray(i).length > 2">
+                            <span class="material-icons">remove_circle</span>
+                          </button>
+                        </div>
+                      </div>
+                      <button type="button" class="add-word-button" (click)="addWordOrderItem(i)">
+                        <span class="material-icons">add_circle</span> Додати слово
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="floating-add-button" (click)="addQuestion()">
+          <span class="material-icons">add</span>
+        </button>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="form-tab-content" *ngIf="activeFormTab === 'settings'">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="order">Порядок</label>
+            <input type="number" id="order" formControlName="order" min="0">
+            <div class="hint-text">Порядок відображення уроку в списку (менше число = вище в списку)</div>
+          </div>
+
+          <div class="form-group">
+            <label for="tags">Теги (через кому)</label>
+            <input type="text" id="tags" formControlName="tags" placeholder="Наприклад: граматика, дієслова, минулий час">
+            <div class="hint-text">Теги допомагають користувачам знаходити уроки за темами</div>
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-container">
+            <input type="checkbox" formControlName="isPublished">
+            <span class="checkbox-label">Опублікований</span>
+          </label>
+          <div class="hint-text">Неопубліковані уроки не відображаються для користувачів</div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="cancel-button" (click)="onCloseModal($event)">
+          <span class="material-icons">cancel</span> Скасувати
+        </button>
+        <button type="submit" class="save-button" [disabled]="lessonForm.invalid || savingLesson">
+          <span class="material-icons">save</span> {{ savingLesson ? 'Збереження...' : 'Зберегти' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

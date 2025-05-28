@@ -1,0 +1,66 @@
+<div class="cookie-consent-container" *ngIf="showConsent">
+  <div class="cookie-consent" [class.expanded]="showDetails">
+    <div class="cookie-consent-header">
+      <div class="cookie-icon">
+        <span class="material-icons">cookie</span>
+      </div>
+      <h2>Налаштування файлів cookie</h2>
+    </div>
+
+    <div class="cookie-consent-content">
+      <p>
+        Ми використовуємо файли cookie, щоб покращити ваш досвід на нашому веб-сайті, персоналізувати контент та аналізувати наш трафік. Ви можете вибрати, які файли cookie ви хочете дозволити.
+      </p>
+
+      <div class="cookie-consent-actions" *ngIf="!showDetails">
+        <button class="btn-primary" (click)="acceptAll()">
+          <span class="material-icons">check_circle</span>
+          Прийняти всі
+        </button>
+        <button class="btn-secondary" (click)="acceptNecessary()">
+          <span class="material-icons">check</span>
+          Тільки необхідні
+        </button>
+        <button class="btn-tertiary" (click)="toggleDetails()">
+          <span class="material-icons">tune</span>
+          Налаштувати
+        </button>
+      </div>
+
+      <div class="cookie-details" *ngIf="showDetails">
+        <div class="cookie-categories">
+          <div class="cookie-category" *ngFor="let category of cookieCategories">
+            <div class="category-header">
+              <div class="category-info">
+                <h3>{{ category.name }}</h3>
+                <span class="required-badge" *ngIf="category.required">Обов'язкові</span>
+              </div>
+              <div class="category-toggle">
+                <label class="toggle">
+                  <input
+                    type="checkbox"
+                    [checked]="category.enabled"
+                    (change)="category.enabled = !category.enabled"
+                    [disabled]="category.required">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            <p class="category-description">{{ category.description }}</p>
+          </div>
+        </div>
+
+        <div class="cookie-consent-actions details-actions">
+          <button class="btn-secondary" (click)="toggleDetails()">
+            <span class="material-icons">arrow_back</span>
+            Назад
+          </button>
+          <button class="btn-primary" (click)="saveCustomPreferences()">
+            <span class="material-icons">save</span>
+            Зберегти налаштування
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

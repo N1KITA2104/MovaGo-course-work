@@ -1,0 +1,79 @@
+<div class="activity-calendar">
+  <div class="calendar-header">
+    <div class="calendar-title">
+      <div class="title-icon">
+        <span class="material-icons">calendar_month</span>
+      </div>
+      <div class="title-content">
+        <h3 class="month-title">{{ currentMonthName }} {{ currentYear }}</h3>
+        <p class="calendar-subtitle">Календар активності</p>
+      </div>
+    </div>
+    <div class="calendar-navigation">
+      <button class="month-nav prev" (click)="previousMonth()" [attr.aria-label]="'Попередній місяць'">
+        <span class="material-icons">chevron_left</span>
+      </button>
+      <button class="month-nav next" (click)="nextMonth()" [attr.aria-label]="'Наступний місяць'">
+        <span class="material-icons">chevron_right</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="calendar-content">
+    <div class="weekdays">
+      <div class="weekday" *ngFor="let day of weekdays">{{ day }}</div>
+    </div>
+
+    <div class="calendar-grid">
+      <div class="day empty" *ngFor="let _ of emptyDaysAtStart"></div>
+
+      <div
+        *ngFor="let day of daysInMonth"
+        class="day"
+        [class.today]="isToday(day)"
+        [class.active]="hasActivity(day)"
+        [class.current-month]="true"
+        [attr.aria-label]="getDayAriaLabel(day)"
+      >
+        <span class="day-number">{{ day }}</span>
+        <div class="activity-indicator" *ngIf="hasActivity(day)">
+          <div class="activity-dot"></div>
+        </div>
+        <div class="today-indicator" *ngIf="isToday(day)">
+          <span class="material-icons">today</span>
+        </div>
+      </div>
+
+      <div class="day empty" *ngFor="let _ of emptyDaysAtEnd"></div>
+    </div>
+  </div>
+
+  <div class="calendar-footer">
+    <div class="calendar-legend">
+      <div class="legend-item">
+        <div class="legend-indicator active">
+          <div class="activity-dot"></div>
+        </div>
+        <span>Активність</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-indicator today">
+          <span class="material-icons">today</span>
+        </div>
+        <span>Сьогодні</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-indicator empty">
+          <div class="empty-dot"></div>
+        </div>
+        <span>Без активності</span>
+      </div>
+    </div>
+    <div class="calendar-stats">
+      <div class="stat-item">
+        <span class="stat-value">{{ getMonthActivityCount() }}</span>
+        <span class="stat-label">днів активності</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<div class="modal-overlay" (click)="onCloseModal($event)">
+  <div class="status-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3><span class="material-icons">person_outline</span> Змінити статус користувача</h3>
+      <button class="close-button" (click)="onCloseModal($event)">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="modal-content" *ngIf="selectedUser">
+      <div class="user-info">
+        <div class="user-avatar">{{ selectedUser.username.charAt(0).toUpperCase() }}</div>
+        <div class="user-details">
+          <h4>{{ selectedUser.username }}</h4>
+          <p>{{ selectedUser.email }}</p>
+        </div>
+      </div>
+
+      <div class="status-options">
+        <div class="status-option"
+             [class.active]="selectedStatus === 'active'"
+             (click)="selectStatus('active')">
+          <div class="status-icon active">
+            <span class="material-icons">check_circle</span>
+          </div>
+          <div class="status-details">
+            <h5>Активний</h5>
+            <p>Користувач має повний доступ до платформи</p>
+          </div>
+        </div>
+
+        <div class="status-option"
+             [class.active]="selectedStatus === 'inactive'"
+             (click)="selectStatus('inactive')">
+          <div class="status-icon inactive">
+            <span class="material-icons">cancel</span>
+          </div>
+          <div class="status-details">
+            <h5>Неактивний</h5>
+            <p>Користувач не може входити в систему</p>
+          </div>
+        </div>
+
+        <div class="status-option"
+             [class.active]="selectedStatus === 'pending'"
+             (click)="selectStatus('pending')">
+          <div class="status-icon pending">
+            <span class="material-icons">hourglass_empty</span>
+          </div>
+          <div class="status-details">
+            <h5>Очікує підтвердження</h5>
+            <p>Користувач очікує підтвердження реєстрації</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="cancel-button" (click)="onCloseModal($event)">
+        Скасувати
+      </button>
+      <button class="save-button" (click)="onSaveStatus()" [disabled]="!selectedStatus || selectedStatus === selectedUser?.status">
+        <span class="material-icons">save</span> Зберегти
+      </button>
+    </div>
+  </div>
+</div>

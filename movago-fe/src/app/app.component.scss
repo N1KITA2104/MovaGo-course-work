@@ -1,0 +1,16 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  transition: background-color var(--transition-speed) ease;
+}
+
+.main-content {
+  flex: 1;
+  padding: 1rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+

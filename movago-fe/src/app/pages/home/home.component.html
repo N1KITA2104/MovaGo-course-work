@@ -1,0 +1,251 @@
+<div class="home-container">
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="material-icons">school</span>
+        <span>Платформа для вивчення мови</span>
+      </div>
+      <h1>Вивчайте англійську з <span class="brand-highlight">MovaGo</span></h1>
+      <p>Інтерактивні уроки, ігрові завдання та відстеження прогресу - все, що потрібно для ефективного вивчення мови</p>
+      <div class="cta-buttons">
+        <a routerLink="/lessons" class="btn btn-primary">
+          <span class="material-icons">play_arrow</span>
+          Почати навчання
+        </a>
+        <a *ngIf="!authService.isLoggedIn()" routerLink="/register" class="btn btn-secondary">
+          <span class="material-icons">person_add</span>
+          Зареєструватися
+        </a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-image-wrapper">
+        <img ngSrc="/hero-image.svg" alt="Вивчення мови" height="400" width="400" priority class="animated-hero" />
+        <div class="hero-decoration"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features-section">
+    <div class="section-header">
+      <span class="section-badge">Переваги</span>
+      <h2>Чому MovaGo?</h2>
+      <p>Унікальні можливості для ефективного навчання</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-header">
+          <div class="feature-icon gaming">
+            <span class="material-icons">sports_esports</span>
+          </div>
+          <div class="feature-badge">Популярно</div>
+        </div>
+        <div class="feature-content">
+          <h3>Ігрове навчання</h3>
+          <p>Вивчайте мову через інтерактивні завдання та ігри</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-header">
+          <div class="feature-icon analytics">
+            <span class="material-icons">analytics</span>
+          </div>
+          <div class="feature-badge">Ефективно</div>
+        </div>
+        <div class="feature-content">
+          <h3>Відстеження прогресу</h3>
+          <p>Слідкуйте за своїми досягненнями та зростанням</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-header">
+          <div class="feature-icon streak">
+            <span class="material-icons">local_fire_department</span>
+          </div>
+          <div class="feature-badge">Мотивація</div>
+        </div>
+        <div class="feature-content">
+          <h3>Щоденні завдання</h3>
+          <p>Підтримуйте мотивацію через систему щоденних цілей</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-header">
+          <div class="feature-icon competition">
+            <span class="material-icons">emoji_events</span>
+          </div>
+          <div class="feature-badge">Змагання</div>
+        </div>
+        <div class="feature-content">
+          <h3>Досягнення</h3>
+          <p>Змагайтеся з друзями та іншими користувачами</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="levels-section">
+    <div class="section-header">
+      <span class="section-badge">Рівні</span>
+      <h2>Рівні складності</h2>
+      <p>Оберіть рівень, що відповідає вашим знанням</p>
+    </div>
+    <div class="levels-grid">
+      <div class="level-card beginner">
+        <div class="level-header">
+          <div class="level-icon">
+            <span class="material-icons">school</span>
+          </div>
+          <div class="level-badge">Початковий</div>
+        </div>
+        <div class="level-content">
+          <h3>Початковий рівень</h3>
+          <p>Ідеально для тих, хто тільки починає вивчати мову</p>
+          <div class="level-stats">
+            <div class="stat">
+              <span class="material-icons">quiz</span>
+              <span>50+ уроків</span>
+            </div>
+            <div class="stat">
+              <span class="material-icons">schedule</span>
+              <span>2-3 хв/урок</span>
+            </div>
+          </div>
+        </div>
+        <div class="level-actions">
+          <a routerLink="/lessons" [queryParams]="{difficulty: 'beginner'}" class="btn btn-level">
+            <span class="material-icons">arrow_forward</span>
+            Почати навчання
+          </a>
+        </div>
+      </div>
+      <div class="level-card intermediate">
+        <div class="level-header">
+          <div class="level-icon">
+            <span class="material-icons">trending_up</span>
+          </div>
+          <div class="level-badge">Середній</div>
+        </div>
+        <div class="level-content">
+          <h3>Середній рівень</h3>
+          <p>Для тих, хто вже має базові знання мови</p>
+          <div class="level-stats">
+            <div class="stat">
+              <span class="material-icons">quiz</span>
+              <span>75+ уроків</span>
+            </div>
+            <div class="stat">
+              <span class="material-icons">schedule</span>
+              <span>3-5 хв/урок</span>
+            </div>
+          </div>
+        </div>
+        <div class="level-actions">
+          <a routerLink="/lessons" [queryParams]="{difficulty: 'intermediate'}" class="btn btn-level">
+            <span class="material-icons">arrow_forward</span>
+            Почати навчання
+          </a>
+        </div>
+      </div>
+      <div class="level-card advanced">
+        <div class="level-header">
+          <div class="level-icon">
+            <span class="material-icons">workspace_premium</span>
+          </div>
+          <div class="level-badge">Просунутий</div>
+        </div>
+        <div class="level-content">
+          <h3>Просунутий рівень</h3>
+          <p>Складні завдання для досвідчених користувачів</p>
+          <div class="level-stats">
+            <div class="stat">
+              <span class="material-icons">quiz</span>
+              <span>100+ уроків</span>
+            </div>
+            <div class="stat">
+              <span class="material-icons">schedule</span>
+              <span>5-10 хв/урок</span>
+            </div>
+          </div>
+        </div>
+        <div class="level-actions">
+          <a routerLink="/lessons" [queryParams]="{difficulty: 'advanced'}" class="btn btn-level">
+            <span class="material-icons">arrow_forward</span>
+            Почати навчання
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="progress-section" *ngIf="authService.isLoggedIn()">
+    <div class="section-header">
+      <span class="section-badge">Прогрес</span>
+      <h2>Ваші досягнення</h2>
+      <p>Відстежуйте свій прогрес та мотивацію</p>
+    </div>
+    <div class="progress-content" *ngIf="userProfile">
+      <div class="progress-summary">
+        <div class="progress-card level">
+          <div class="progress-header">
+            <div class="progress-icon">
+              <span class="material-icons">military_tech</span>
+            </div>
+            <div class="progress-trend up">
+              <span class="material-icons">trending_up</span>
+            </div>
+          </div>
+          <div class="progress-content">
+            <span class="progress-label">Рівень</span>
+            <span class="progress-value">{{ userProfile.progress.level }}</span>
+          </div>
+        </div>
+        <div class="progress-card xp">
+          <div class="progress-header">
+            <div class="progress-icon">
+              <span class="material-icons">stars</span>
+            </div>
+            <div class="progress-trend up">
+              <span class="material-icons">trending_up</span>
+            </div>
+          </div>
+          <div class="progress-content">
+            <span class="progress-label">Досвід (XP)</span>
+            <span class="progress-value">{{ userProfile.progress.xp }}</span>
+          </div>
+        </div>
+        <div class="progress-card lessons">
+          <div class="progress-header">
+            <div class="progress-icon">
+              <span class="material-icons">task_alt</span>
+            </div>
+            <div class="progress-trend neutral">
+              <span class="material-icons">remove</span>
+            </div>
+          </div>
+          <div class="progress-content">
+            <span class="progress-label">Завершені уроки</span>
+            <span class="progress-value">{{ userProfile.progress.completedLessons.length }}</span>
+          </div>
+        </div>
+        <div class="progress-card streak">
+          <div class="progress-header">
+            <div class="progress-icon">
+              <span class="material-icons">local_fire_department</span>
+            </div>
+            <div class="progress-trend up">
+              <span class="material-icons">trending_up</span>
+            </div>
+          </div>
+          <div class="progress-content">
+            <span class="progress-label">Серія днів</span>
+            <span class="progress-value">{{ userProfile.progress.streakDays }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="calendar-wrapper">
+        <app-activity-calendar></app-activity-calendar>
+      </div>
+    </div>
+  </section>
+</div>

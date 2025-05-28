@@ -1,0 +1,42 @@
+<div class="auth-container">
+  <h2>Перевірка коду</h2>
+  <div class="auth-description">
+    <p>Введіть 6-значний код, який ми надіслали на вашу електронну адресу.</p>
+    <p class="email-info" *ngIf="email">{{ email }}</p>
+  </div>
+
+  <form [formGroup]="verifyCodeForm" (ngSubmit)="verifyCode()">
+    <div class="form-group">
+      <label for="code">Код підтвердження</label>
+      <div class="code-input-container">
+        <input
+          type="text"
+          id="code"
+          formControlName="code"
+          placeholder="Введіть 6-значний код"
+          maxlength="6"
+          autocomplete="off"
+        />
+      </div>
+      <div *ngIf="verifyCodeForm.get('code')?.invalid && verifyCodeForm.get('code')?.touched" class="error-message">
+        <span *ngIf="verifyCodeForm.get('code')?.errors?.['required']">Код обов'язковий.</span>
+        <span *ngIf="verifyCodeForm.get('code')?.errors?.['pattern']">Код повинен містити 6 цифр.</span>
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="verifyCodeForm.invalid || isLoading">
+      <span *ngIf="isLoading">
+        <span class="spinner"></span>
+        Перевірка...
+      </span>
+      <span *ngIf="!isLoading">Перевірити код</span>
+    </button>
+
+    <div class="auth-links">
+      <p>Не отримали код? <a href="javascript:void(0)" (click)="resendCode()">Надіслати повторно</a></p>
+      <p><a routerLink="/forgot-password">Змінити email</a></p>
+    </div>
+  </form>
+
+  <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+</div>

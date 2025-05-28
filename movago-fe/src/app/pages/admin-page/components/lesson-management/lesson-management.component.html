@@ -1,0 +1,137 @@
+<div class="tab-content">
+  <div class="section-header">
+    <h2><span class="material-icons">auto_stories</span> Управління уроками</h2>
+    <div class="actions">
+      <button class="add-button" (click)="showLessonForm()">
+        <span class="material-icons">add_circle</span> Додати урок
+      </button>
+      <div class="search-container">
+        <input
+          type="text"
+          placeholder="Пошук уроків..."
+          [(ngModel)]="lessonSearchQuery"
+          (input)="filterLessons()">
+        <span class="material-icons search-icon">search</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="filter-options">
+    <div class="filter-group">
+      <label><span class="material-icons">signal_cellular_alt</span> Складність:</label>
+      <div class="filter-buttons">
+        <button
+          [class.active]="difficultyFilter === 'all'"
+          (click)="filterByDifficulty('all')">
+          Всі
+        </button>
+        <button
+          [class.active]="difficultyFilter === 'beginner'"
+          (click)="filterByDifficulty('beginner')">
+          Початковий
+        </button>
+        <button
+          [class.active]="difficultyFilter === 'intermediate'"
+          (click)="filterByDifficulty('intermediate')">
+          Середній
+        </button>
+        <button
+          [class.active]="difficultyFilter === 'advanced'"
+          (click)="filterByDifficulty('advanced')">
+          Просунутий
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <label><span class="material-icons">visibility</span> Видимість:</label>
+      <div class="filter-buttons">
+        <button
+          [class.active]="visibilityFilter === 'all'"
+          (click)="filterByVisibility('all')">
+          Всі
+        </button>
+        <button
+          [class.active]="visibilityFilter === 'published'"
+          (click)="filterByVisibility('published')">
+          Опубліковані
+        </button>
+        <button
+          [class.active]="visibilityFilter === 'unpublished'"
+          (click)="filterByVisibility('unpublished')">
+          Неопубліковані
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="loading-indicator" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Завантаження уроків...</p>
+  </div>
+
+  <div class="lessons-grid" *ngIf="!loading">
+    <div class="lesson-card" *ngFor="let lesson of filteredLessons">
+      <div class="lesson-header">
+        <div class="lesson-icon">{{ lesson.icon }}</div>
+        <div class="lesson-status" [class.published]="lesson.isPublished" [class.unpublished]="!lesson.isPublished">
+          <span class="material-icons">{{ lesson.isPublished ? 'public' : 'visibility_off' }}</span>
+          {{ lesson.isPublished ? 'Опубліковано' : 'Не опубліковано' }}
+        </div>
+      </div>
+      <div class="lesson-content">
+        <h3 class="lesson-title">{{ lesson.title }}</h3>
+        <p class="lesson-description">{{ lesson.description }}</p>
+        <div class="lesson-meta">
+          <span class="lesson-difficulty" [class]="lesson.difficulty">
+            <span class="material-icons">{{
+                lesson.difficulty === 'beginner' ? 'emoji_events' :
+                  lesson.difficulty === 'intermediate' ? 'military_tech' : 'workspace_premium'
+              }}</span>
+            {{ getDifficultyLabel(lesson.difficulty) }}
+          </span>
+          <span class="lesson-category" *ngIf="lesson.category">
+            <span class="material-icons">category</span>
+            {{ getCategoryLabel(lesson.category) }}
+          </span>
+          <span class="lesson-questions">
+            <span class="material-icons">quiz</span>
+            {{ lesson.questionBank?.length || lesson.questions.length }} питань в банку
+          </span>
+          <span class="lesson-questions-count" *ngIf="lesson.questionBank?.length">
+            <span class="material-icons">format_list_numbered</span>
+            {{ lesson.questionsCount || 5 }} питань в уроці
+          </span>
+        </div>
+      </div>
+      <div class="lesson-actions">
+        <div class="toggle-container">
+          <label class="toggle">
+            <input
+              type="checkbox"
+              [checked]="lesson.isPublished"
+              (change)="toggleLessonPublished(lesson)">
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label">{{ lesson.isPublished ? 'Опубліковано' : 'Не опубліковано' }}</span>
+        </div>
+        <div class="action-buttons">
+          <button class="action-button edit" title="Редагувати урок" (click)="editLesson(lesson)">
+            <span class="material-icons">edit</span>
+          </button>
+          <button class="action-button delete" title="Видалити урок" (click)="confirmDeleteLesson(lesson)">
+            <span class="material-icons">delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-data-message" *ngIf="filteredLessons.length === 0">
+      <div class="no-data-icon"><span class="material-icons">menu_book</span></div>
+      <p>Уроків не знайдено</p>
+      <button class="reset-search" (click)="resetLessonFilters()">
+        <span class="material-icons">refresh</span> Скинути фільтри
+      </button>
+    </div>
+  </div>
+</div>
