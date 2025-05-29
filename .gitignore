@@ -47,3 +47,4 @@ movago-fe/.turbo/
 # Docker
 *.local.yml
 .env.*
+.env
