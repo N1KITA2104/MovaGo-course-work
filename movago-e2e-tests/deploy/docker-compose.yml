@@ -1,0 +1,44 @@
+services:
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+
+  movago:
+    build:
+      context: ../..
+      dockerfile: movago-e2e-tests/deploy/app/Dockerfile
+      args:
+        GMAIL_USER: ${GMAIL_USER}
+        GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD}
+    ports:
+      - "3000:3000" # Backend
+      - "4200:4200" # Frontend
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/movago
+      MONGODB_URI_PROD: mongodb://mongo:27017/movago
+      NODE_ENV: production
+      JWT_SECRET: supersecret123
+      GMAIL_USER: ${GMAIL_USER}
+      GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD}
+      PORT: 3000
+    depends_on:
+      - mongo
+
+  tests:
+    image: mcr.microsoft.com/playwright:v1.52.0-noble
+    working_dir: /app
+    volumes:
+      - ../:/app
+    depends_on:
+      - movago
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/movago
+      CI: true
+    command: >
+      sh -c "
+        npm ci &&
+        npx playwright install --with-deps &&
+        npx wait-on http://movago:4200 &&
+        npx playwright test
+      "
