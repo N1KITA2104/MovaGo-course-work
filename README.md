@@ -29,6 +29,8 @@ Angular SPA with modules, components, services, interceptors
 Express.js API with controllers, middleware, models, routes
 **/movago-mobile**
 React Native mobile web-app
+**/movago-e2e-tests**
+Playwright testing framework with e2e tests for MovaGo app
 
 ## 🚀 Setup and Installation Guide
 
@@ -81,6 +83,22 @@ API will be available at: **http://localhost:5000/api**
 ```env
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/movago
 ```
+
+### 🧪 E2E Tests (Playwright)
+End-to-end tests for **MovaGo** are written using [Playwright](https://playwright.dev/), simulating user behavior in the browser.
+#### 🧰 Setup
+1️⃣ Make sure the app is running locally at [http://localhost:4200](http://localhost:4200)  
+2️⃣ Create a `.env` file in the `/movago-e2e-tests/` folder with your test MongoDB URI, f.e:
+```env
+MONGODB_URI=mongodb://localhost:27017/movago
+```
+▶️ Run Tests
+From the /movago-e2e-tests/ directory, run:
+```bash
+npx playwright test
+```
+Or use the Playwright Test for VSCode extension for GUI-based execution and debugging.
+
 ### 🔗 Additional Tools
 - Netlify: For frontend hosting with automatic deploy.
 - Railway: For backend deployment with CI/CD.
@@ -97,3 +115,4 @@ npm install -g @angular/cli
 ## 👥 Authors
 ### Nikita Apatiev
 ### Teodor Migalchan
+### Veronika Ardelian (Tester)
