@@ -1,5 +1,7 @@
 # 🌍 MovaGo – Language Learning App
 
+[![Playwright E2E Tests](https://github.com/N1KITA2104/MovaGo-course-work/actions/workflows/playwright.yml/badge.svg?branch=master)](https://github.com/N1KITA2104/MovaGo-course-work/actions/workflows/playwright.yml)
+
 ## 📝 Project Overview
 
 **MovaGo** is a modern web application designed for learning English through interactive lessons and personalized content.  
